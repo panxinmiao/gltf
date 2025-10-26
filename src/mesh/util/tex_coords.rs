@@ -33,6 +33,14 @@ pub trait Cast {
 
     /// Cast from f32 pair.
     fn cast_f32(x: [f32; 2]) -> Self::Output;
+
+    #[cfg(feature = "KHR_mesh_quantization")]
+    /// Cast from i8 pair.
+    fn cast_i8(x: [i8; 2]) -> Self::Output;
+
+    #[cfg(feature = "KHR_mesh_quantization")]
+    /// Cast from i16 pair.
+    fn cast_i16(x: [i16; 2]) -> Self::Output;
 }
 
 impl<'a, A> CastingIter<'a, A> {
@@ -56,6 +64,10 @@ impl<'a, A: Cast> Iterator for CastingIter<'a, A> {
             ReadTexCoords::U8(ref mut i) => i.next().map(A::cast_u8),
             ReadTexCoords::U16(ref mut i) => i.next().map(A::cast_u16),
             ReadTexCoords::F32(ref mut i) => i.next().map(A::cast_f32),
+            #[cfg(feature = "KHR_mesh_quantization")]
+            ReadTexCoords::I8(ref mut i) => i.next().map(A::cast_i8),
+            #[cfg(feature = "KHR_mesh_quantization")]
+            ReadTexCoords::I16(ref mut i) => i.next().map(A::cast_i16),
         }
     }
 
@@ -65,6 +77,10 @@ impl<'a, A: Cast> Iterator for CastingIter<'a, A> {
             ReadTexCoords::U8(ref mut i) => i.nth(x).map(A::cast_u8),
             ReadTexCoords::U16(ref mut i) => i.nth(x).map(A::cast_u16),
             ReadTexCoords::F32(ref mut i) => i.nth(x).map(A::cast_f32),
+            #[cfg(feature = "KHR_mesh_quantization")]
+            ReadTexCoords::I8(ref mut i) => i.nth(x).map(A::cast_i8),
+            #[cfg(feature = "KHR_mesh_quantization")]
+            ReadTexCoords::I16(ref mut i) => i.nth(x).map(A::cast_i16),
         }
     }
 
@@ -73,6 +89,10 @@ impl<'a, A: Cast> Iterator for CastingIter<'a, A> {
             ReadTexCoords::U8(i) => i.last().map(A::cast_u8),
             ReadTexCoords::U16(i) => i.last().map(A::cast_u16),
             ReadTexCoords::F32(i) => i.last().map(A::cast_f32),
+            #[cfg(feature = "KHR_mesh_quantization")]
+            ReadTexCoords::I8(i) => i.last().map(A::cast_i8),
+            #[cfg(feature = "KHR_mesh_quantization")]
+            ReadTexCoords::I16(i) => i.last().map(A::cast_i16),
         }
     }
 
@@ -86,6 +106,10 @@ impl<'a, A: Cast> Iterator for CastingIter<'a, A> {
             ReadTexCoords::U8(ref i) => i.size_hint(),
             ReadTexCoords::U16(ref i) => i.size_hint(),
             ReadTexCoords::F32(ref i) => i.size_hint(),
+            #[cfg(feature = "KHR_mesh_quantization")]
+            ReadTexCoords::I8(ref i) => i.size_hint(),
+            #[cfg(feature = "KHR_mesh_quantization")]
+            ReadTexCoords::I16(ref i) => i.size_hint(),
         }
     }
 }
@@ -104,6 +128,16 @@ impl Cast for U8 {
     fn cast_f32(x: [f32; 2]) -> Self::Output {
         x.normalize()
     }
+
+    #[cfg(feature = "KHR_mesh_quantization")]
+    fn cast_i8(x: [i8; 2]) -> Self::Output {
+        [x[0] as u8, x[1] as u8]
+    }
+
+    #[cfg(feature = "KHR_mesh_quantization")]
+    fn cast_i16(x: [i16; 2]) -> Self::Output {
+        [x[0] as u8, x[1] as u8]
+    }
 }
 
 impl Cast for U16 {
@@ -120,6 +154,16 @@ impl Cast for U16 {
     fn cast_f32(x: [f32; 2]) -> Self::Output {
         x.normalize()
     }
+
+    #[cfg(feature = "KHR_mesh_quantization")]
+    fn cast_i8(x: [i8; 2]) -> Self::Output {
+        [x[0] as u16, x[1] as u16]
+    }
+
+    #[cfg(feature = "KHR_mesh_quantization")]
+    fn cast_i16(x: [i16; 2]) -> Self::Output {
+        [x[0] as u16, x[1] as u16]
+    }
 }
 
 impl Cast for F32 {
@@ -135,5 +179,15 @@ impl Cast for F32 {
 
     fn cast_f32(x: [f32; 2]) -> Self::Output {
         x.normalize()
+    }
+
+    #[cfg(feature = "KHR_mesh_quantization")]
+    fn cast_i8(x: [i8; 2]) -> Self::Output {
+        [x[0] as f32, x[1] as f32]
+    }
+
+    #[cfg(feature = "KHR_mesh_quantization")]
+    fn cast_i16(x: [i16; 2]) -> Self::Output {
+        [x[0] as f32, x[1] as f32]
     }
 }
