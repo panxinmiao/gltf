@@ -514,30 +514,33 @@ where
             .get(&Semantic::TexCoords(set))
             .and_then(|accessor| {
                 #[cfg(feature = "KHR_mesh_quantization")]
-                match accessor.data_type() {
-                    DataType::I8 => {
-                        // TEXCOORD supports both normalized and unnormalized BYTE
-                        accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                            .map(ReadTexCoords::I8)
+                {
+                    let normalized = accessor.normalized();
+                    match accessor.data_type() {
+                        DataType::I8 => {
+                            // TEXCOORD supports both normalized and unnormalized BYTE
+                            accessor::Iter::new(accessor, self.get_buffer_data.clone())
+                                .map(|iter| ReadTexCoords::I8(iter, normalized))
+                        }
+                        DataType::U8 => {
+                            // TEXCOORD supports UNSIGNED_BYTE
+                            accessor::Iter::new(accessor, self.get_buffer_data.clone())
+                                .map(ReadTexCoords::U8)
+                        }
+                        DataType::I16 => {
+                            // TEXCOORD supports both normalized and unnormalized SHORT
+                            accessor::Iter::new(accessor, self.get_buffer_data.clone())
+                                .map(|iter| ReadTexCoords::I16(iter, normalized))
+                        }
+                        DataType::U16 => {
+                            // TEXCOORD supports UNSIGNED_SHORT
+                            accessor::Iter::new(accessor, self.get_buffer_data.clone())
+                                .map(ReadTexCoords::U16)
+                        }
+                        DataType::F32 => accessor::Iter::new(accessor, self.get_buffer_data.clone())
+                            .map(ReadTexCoords::F32),
+                        _ => None, // Invalid component types for texture coordinates (e.g., U32)
                     }
-                    DataType::U8 => {
-                        // TEXCOORD supports UNSIGNED_BYTE (traditionally unnormalized in glTF)
-                        accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                            .map(ReadTexCoords::U8)
-                    }
-                    DataType::I16 => {
-                        // TEXCOORD supports both normalized and unnormalized SHORT
-                        accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                            .map(ReadTexCoords::I16)
-                    }
-                    DataType::U16 => {
-                        // TEXCOORD supports UNSIGNED_SHORT (traditionally unnormalized in glTF)
-                        accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                            .map(ReadTexCoords::U16)
-                    }
-                    DataType::F32 => accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                        .map(ReadTexCoords::F32),
-                    _ => None, // Invalid component types for texture coordinates (e.g., U32)
                 }
                 #[cfg(not(feature = "KHR_mesh_quantization"))]
                 match accessor.data_type() {

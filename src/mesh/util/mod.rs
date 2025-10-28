@@ -506,10 +506,10 @@ pub enum ReadTexCoords<'a> {
     F32(Iter<'a, [f32; 2]>),
     #[cfg(feature = "KHR_mesh_quantization")]
     /// UV texture co-ordinates of type `[i8; 2]>`.
-    I8(Iter<'a, [i8; 2]>),
+    I8(Iter<'a, [i8; 2]>, bool), // (iterator, normalized)
     #[cfg(feature = "KHR_mesh_quantization")]
     /// UV texture co-ordinates of type `[i16; 2]>`.
-    I16(Iter<'a, [i16; 2]>),
+    I16(Iter<'a, [i16; 2]>, bool), // (iterator, normalized)
 }
 
 /// Weights.

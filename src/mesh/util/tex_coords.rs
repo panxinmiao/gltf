@@ -36,11 +36,11 @@ pub trait Cast {
 
     #[cfg(feature = "KHR_mesh_quantization")]
     /// Cast from i8 pair.
-    fn cast_i8(x: [i8; 2]) -> Self::Output;
+    fn cast_i8(x: [i8; 2], normalized: bool) -> Self::Output;
 
     #[cfg(feature = "KHR_mesh_quantization")]
     /// Cast from i16 pair.
-    fn cast_i16(x: [i16; 2]) -> Self::Output;
+    fn cast_i16(x: [i16; 2], normalized: bool) -> Self::Output;
 }
 
 impl<'a, A> CastingIter<'a, A> {
@@ -65,9 +65,9 @@ impl<'a, A: Cast> Iterator for CastingIter<'a, A> {
             ReadTexCoords::U16(ref mut i) => i.next().map(A::cast_u16),
             ReadTexCoords::F32(ref mut i) => i.next().map(A::cast_f32),
             #[cfg(feature = "KHR_mesh_quantization")]
-            ReadTexCoords::I8(ref mut i) => i.next().map(A::cast_i8),
+            ReadTexCoords::I8(ref mut i, normalized) => i.next().map(|v| A::cast_i8(v, normalized)),
             #[cfg(feature = "KHR_mesh_quantization")]
-            ReadTexCoords::I16(ref mut i) => i.next().map(A::cast_i16),
+            ReadTexCoords::I16(ref mut i, normalized) => i.next().map(|v| A::cast_i16(v, normalized)),
         }
     }
 
@@ -78,9 +78,9 @@ impl<'a, A: Cast> Iterator for CastingIter<'a, A> {
             ReadTexCoords::U16(ref mut i) => i.nth(x).map(A::cast_u16),
             ReadTexCoords::F32(ref mut i) => i.nth(x).map(A::cast_f32),
             #[cfg(feature = "KHR_mesh_quantization")]
-            ReadTexCoords::I8(ref mut i) => i.nth(x).map(A::cast_i8),
+            ReadTexCoords::I8(ref mut i, normalized) => i.nth(x).map(|v| A::cast_i8(v, normalized)),
             #[cfg(feature = "KHR_mesh_quantization")]
-            ReadTexCoords::I16(ref mut i) => i.nth(x).map(A::cast_i16),
+            ReadTexCoords::I16(ref mut i, normalized) => i.nth(x).map(|v| A::cast_i16(v, normalized)),
         }
     }
 
@@ -90,9 +90,9 @@ impl<'a, A: Cast> Iterator for CastingIter<'a, A> {
             ReadTexCoords::U16(i) => i.last().map(A::cast_u16),
             ReadTexCoords::F32(i) => i.last().map(A::cast_f32),
             #[cfg(feature = "KHR_mesh_quantization")]
-            ReadTexCoords::I8(i) => i.last().map(A::cast_i8),
+            ReadTexCoords::I8(i, normalized) => i.last().map(|v| A::cast_i8(v, normalized)),
             #[cfg(feature = "KHR_mesh_quantization")]
-            ReadTexCoords::I16(i) => i.last().map(A::cast_i16),
+            ReadTexCoords::I16(i, normalized) => i.last().map(|v| A::cast_i16(v, normalized)),
         }
     }
 
@@ -107,9 +107,9 @@ impl<'a, A: Cast> Iterator for CastingIter<'a, A> {
             ReadTexCoords::U16(ref i) => i.size_hint(),
             ReadTexCoords::F32(ref i) => i.size_hint(),
             #[cfg(feature = "KHR_mesh_quantization")]
-            ReadTexCoords::I8(ref i) => i.size_hint(),
+            ReadTexCoords::I8(ref i, _) => i.size_hint(),
             #[cfg(feature = "KHR_mesh_quantization")]
-            ReadTexCoords::I16(ref i) => i.size_hint(),
+            ReadTexCoords::I16(ref i, _) => i.size_hint(),
         }
     }
 }
@@ -130,13 +130,25 @@ impl Cast for U8 {
     }
 
     #[cfg(feature = "KHR_mesh_quantization")]
-    fn cast_i8(x: [i8; 2]) -> Self::Output {
-        [x[0] as u8, x[1] as u8]
+    fn cast_i8(x: [i8; 2], normalized: bool) -> Self::Output {
+        if normalized {
+            // BYTE normalized: f = max(c / 127.0, -1.0), then convert to u8
+            let f = [(x[0] as f32 / 127.0).max(-1.0), (x[1] as f32 / 127.0).max(-1.0)];
+            f.normalize()
+        } else {
+            [x[0] as u8, x[1] as u8]
+        }
     }
 
     #[cfg(feature = "KHR_mesh_quantization")]
-    fn cast_i16(x: [i16; 2]) -> Self::Output {
-        [x[0] as u8, x[1] as u8]
+    fn cast_i16(x: [i16; 2], normalized: bool) -> Self::Output {
+        if normalized {
+            // SHORT normalized: f = max(c / 32767.0, -1.0), then convert to u8
+            let f = [(x[0] as f32 / 32767.0).max(-1.0), (x[1] as f32 / 32767.0).max(-1.0)];
+            f.normalize()
+        } else {
+            [x[0] as u8, x[1] as u8]
+        }
     }
 }
 
@@ -156,13 +168,25 @@ impl Cast for U16 {
     }
 
     #[cfg(feature = "KHR_mesh_quantization")]
-    fn cast_i8(x: [i8; 2]) -> Self::Output {
-        [x[0] as u16, x[1] as u16]
+    fn cast_i8(x: [i8; 2], normalized: bool) -> Self::Output {
+        if normalized {
+            // BYTE normalized: f = max(c / 127.0, -1.0), then convert to u16
+            let f = [(x[0] as f32 / 127.0).max(-1.0), (x[1] as f32 / 127.0).max(-1.0)];
+            f.normalize()
+        } else {
+            [x[0] as u16, x[1] as u16]
+        }
     }
 
     #[cfg(feature = "KHR_mesh_quantization")]
-    fn cast_i16(x: [i16; 2]) -> Self::Output {
-        [x[0] as u16, x[1] as u16]
+    fn cast_i16(x: [i16; 2], normalized: bool) -> Self::Output {
+        if normalized {
+            // SHORT normalized: f = max(c / 32767.0, -1.0), then convert to u16
+            let f = [(x[0] as f32 / 32767.0).max(-1.0), (x[1] as f32 / 32767.0).max(-1.0)];
+            f.normalize()
+        } else {
+            [x[0] as u16, x[1] as u16]
+        }
     }
 }
 
@@ -182,12 +206,22 @@ impl Cast for F32 {
     }
 
     #[cfg(feature = "KHR_mesh_quantization")]
-    fn cast_i8(x: [i8; 2]) -> Self::Output {
-        [x[0] as f32, x[1] as f32]
+    fn cast_i8(x: [i8; 2], normalized: bool) -> Self::Output {
+        if normalized {
+            // BYTE normalized: f = max(c / 127.0, -1.0)
+            [(x[0] as f32 / 127.0).max(-1.0), (x[1] as f32 / 127.0).max(-1.0)]
+        } else {
+            [x[0] as f32, x[1] as f32]
+        }
     }
 
     #[cfg(feature = "KHR_mesh_quantization")]
-    fn cast_i16(x: [i16; 2]) -> Self::Output {
-        [x[0] as f32, x[1] as f32]
+    fn cast_i16(x: [i16; 2], normalized: bool) -> Self::Output {
+        if normalized {
+            // SHORT normalized: f = max(c / 32767.0, -1.0)
+            [(x[0] as f32 / 32767.0).max(-1.0), (x[1] as f32 / 32767.0).max(-1.0)]
+        } else {
+            [x[0] as f32, x[1] as f32]
+        }
     }
 }
