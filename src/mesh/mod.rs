@@ -525,7 +525,7 @@ where
                         DataType::U8 => {
                             // TEXCOORD supports UNSIGNED_BYTE
                             accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                                .map(ReadTexCoords::U8)
+                                .map(|iter| ReadTexCoords::U8(iter, normalized))
                         }
                         DataType::I16 => {
                             // TEXCOORD supports both normalized and unnormalized SHORT
@@ -535,22 +535,31 @@ where
                         DataType::U16 => {
                             // TEXCOORD supports UNSIGNED_SHORT
                             accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                                .map(ReadTexCoords::U16)
+                                .map(|iter| ReadTexCoords::U16(iter, normalized))
                         }
-                        DataType::F32 => accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                            .map(ReadTexCoords::F32),
+                        DataType::F32 => {
+                            accessor::Iter::new(accessor, self.get_buffer_data.clone())
+                                .map(ReadTexCoords::F32)
+                        }
                         _ => None, // Invalid component types for texture coordinates (e.g., U32)
                     }
                 }
                 #[cfg(not(feature = "KHR_mesh_quantization"))]
-                match accessor.data_type() {
-                    DataType::U8 => accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                        .map(ReadTexCoords::U8),
-                    DataType::U16 => accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                        .map(ReadTexCoords::U16),
-                    DataType::F32 => accessor::Iter::new(accessor, self.get_buffer_data.clone())
-                        .map(ReadTexCoords::F32),
-                    _ => unreachable!(),
+                {
+                    // Base glTF requires U8/U16 texture coordinates to be normalized
+                    match accessor.data_type() {
+                        DataType::U8 => accessor::Iter::new(accessor, self.get_buffer_data.clone())
+                            .map(|iter| ReadTexCoords::U8(iter, true)),
+                        DataType::U16 => {
+                            accessor::Iter::new(accessor, self.get_buffer_data.clone())
+                                .map(|iter| ReadTexCoords::U16(iter, true))
+                        }
+                        DataType::F32 => {
+                            accessor::Iter::new(accessor, self.get_buffer_data.clone())
+                                .map(ReadTexCoords::F32)
+                        }
+                        _ => unreachable!(),
+                    }
                 }
             })
     }

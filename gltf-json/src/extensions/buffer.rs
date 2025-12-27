@@ -1,9 +1,9 @@
+#[cfg(feature = "EXT_meshopt_compression")]
+use crate::validation::USize64;
 use gltf_derive::Validate;
 use serde_derive::{Deserialize, Serialize};
 #[cfg(feature = "extensions")]
 use serde_json::{Map, Value};
-#[cfg(feature = "EXT_meshopt_compression")]
-use crate::validation::USize64;
 
 /// A buffer points to binary data representing geometry, animations, or skins.
 #[derive(Clone, Debug, Default, Deserialize, Serialize, Validate)]
@@ -77,7 +77,10 @@ pub struct MeshoptCompression {
 #[derive(Clone, Debug, Default, Deserialize, Serialize, Validate)]
 pub struct View {
     #[cfg(feature = "EXT_meshopt_compression")]
-    #[serde(rename = "EXT_meshopt_compression", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "EXT_meshopt_compression",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub meshopt_compression: Option<MeshoptCompression>,
 
     #[cfg(feature = "extensions")]

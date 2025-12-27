@@ -75,11 +75,7 @@ impl<'a> Iterator for ReadPositions<'a> {
                 iter.next().map(|[x, y, z]| {
                     if *normalized {
                         // UNSIGNED_BYTE normalized: f = c / 255.0
-                        [
-                            x as f32 / 255.0,
-                            y as f32 / 255.0,
-                            z as f32 / 255.0,
-                        ]
+                        [x as f32 / 255.0, y as f32 / 255.0, z as f32 / 255.0]
                     } else {
                         [x as f32, y as f32, z as f32]
                     }
@@ -103,11 +99,7 @@ impl<'a> Iterator for ReadPositions<'a> {
                 iter.next().map(|[x, y, z]| {
                     if *normalized {
                         // UNSIGNED_SHORT normalized: f = c / 65535.0
-                        [
-                            x as f32 / 65535.0,
-                            y as f32 / 65535.0,
-                            z as f32 / 65535.0,
-                        ]
+                        [x as f32 / 65535.0, y as f32 / 65535.0, z as f32 / 65535.0]
                     } else {
                         [x as f32, y as f32, z as f32]
                     }
@@ -499,9 +491,9 @@ pub enum ReadJoints<'a> {
 #[derive(Clone, Debug)]
 pub enum ReadTexCoords<'a> {
     /// UV texture co-ordinates of type `[u8; 2]>`.
-    U8(Iter<'a, [u8; 2]>),
+    U8(Iter<'a, [u8; 2]>, bool), // (iterator, normalized)
     /// UV texture co-ordinates of type `[u16; 2]>`.
-    U16(Iter<'a, [u16; 2]>),
+    U16(Iter<'a, [u16; 2]>, bool), // (iterator, normalized)
     /// UV texture co-ordinates of type `[f32; 2]`.
     F32(Iter<'a, [f32; 2]>),
     #[cfg(feature = "KHR_mesh_quantization")]
