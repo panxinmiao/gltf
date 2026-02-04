@@ -203,12 +203,11 @@ impl<'a> Target<'a> {
     }
 
     /// Returns the target node.
-    pub fn node(&self) -> scene::Node<'a> {
+    pub fn node(&self) -> Option<scene::Node<'a>> {
         self.anim
             .document
             .nodes()
             .nth(self.json.node.value())
-            .unwrap()
     }
 
     /// Returns the node's property to modify or the 'weights' of the morph
