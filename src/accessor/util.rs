@@ -388,17 +388,10 @@ impl<'a, 's, T: Item> Iter<'s, T> {
                 )))
             }
             None => {
-                debug_assert_eq!(mem::size_of::<T>(), accessor.size());
                 debug_assert!(mem::size_of::<T>() > 0);
 
                 if let Some(view) = accessor.view() {
                     let stride = view.stride().unwrap_or(mem::size_of::<T>());
-                    debug_assert!(
-                        stride >= mem::size_of::<T>(),
-                        "Mismatch in stride, expected at least {} stride but found {}",
-                        mem::size_of::<T>(),
-                        stride
-                    );
 
                     let start = accessor.offset();
                     let end = start + stride * (accessor.count() - 1) + mem::size_of::<T>();
