@@ -1,7 +1,5 @@
 //! Tests for glTF extensions: KHR_mesh_quantization, EXT_meshopt_compression, KHR_texture_transform
 
-const SAMPLE_MODELS_DIR: &str = "";
-
 /// Test that KHR_mesh_quantization reads texture coordinates correctly.
 /// Duck/glTF-Quantized uses U16 texture coordinates with normalized=false.
 /// The library should return raw integer values, not normalized [0,1] values.

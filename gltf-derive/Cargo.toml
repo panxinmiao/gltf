@@ -1,14 +1,15 @@
 [package]
-name = "gltf-derive"
-version = "1.4.1"
-authors = ["David Harvey-Macaulay <alteous@outlook.com>"]
-description = "Internal macros for the gltf crate"
-repository = "https://github.com/gltf-rs/gltf"
+name = "myth-gltf-derive"
+version = "1.4.2"
+authors = ["Pan Xinmiao <pan_xinmiao@163.com>", "David Harvey-Macaulay <alteous@outlook.com>"]
+description = "Internal macros for the myth-gltf crate (fork)"
+repository = "https://github.com/panxinmiao/gltf"
 license = "MIT OR Apache-2.0"
 edition = "2021"
 
 [lib]
 proc-macro = true
+name = "gltf_derive"
 
 [dependencies]
 inflections = "1.1"

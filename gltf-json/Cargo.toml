@@ -1,15 +1,18 @@
 [package]
-name = "gltf-json"
-version = "1.4.1"
-authors = ["David Harvey-Macaulay <alteous@outlook.com>"]
-description = "JSON parsing for the gltf crate"
-repository = "https://github.com/gltf-rs/gltf"
+name = "myth-gltf-json"
+version = "1.4.2"
+authors = ["Pan Xinmiao <pan_xinmiao@163.com>", "David Harvey-Macaulay <alteous@outlook.com>"]
+description = "JSON parsing for the myth-gltf crate (fork)"
+repository = "https://github.com/panxinmiao/gltf"
 license = "MIT OR Apache-2.0"
 edition = "2021"
 rust-version = "1.61"
 
+[lib]
+name = "gltf_json"
+
 [dependencies]
-gltf-derive = { path = "../gltf-derive", version = "=1.4.1" }
+gltf-derive = { package = "myth-gltf-derive", path = "../gltf-derive", version = "=1.4.2" }
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = { features = ["raw_value"], version = "1.0" }

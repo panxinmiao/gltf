@@ -12,6 +12,8 @@
 
 ---
 
+> **⚠️ Fork Notice:** > This is a maintained fork of the original [`gltf`](https://crates.io/crates/gltf) crate. Since the original repository has been inactive, this fork was created to support modern 3D rendering engines (specifically the [Myth Engine](https://github.com/panxinmiao/myth)), bringing critical support for new glTF 2.0 extensions like Meshopt Compression.
+
 This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a file format designed for the efficient transmission of 3D assets.
 
 `rustc` version 1.61 or above is required.
@@ -25,17 +27,17 @@ This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a file 
 
 ### Usage
 
-See the [crate documentation](https://docs.rs/gltf) for example usage.
+See the [crate documentation](https://docs.rs/myth-gltf) for example usage.
 
 ### Features
 
 #### Extras and names
 
-By default, `gltf` ignores all `extras` and `names` included with glTF assets. You can negate this by enabling the `extras` and `names` features, respectively.
+By default, `myth-gltf` ignores all `extras` and `names` included with glTF assets. You can negate this by enabling the `extras` and `names` features, respectively.
 
 ```toml
-[dependencies.gltf]
-version = "1.4"
+[dependencies.myth-gltf]
+version = "1.4.2"
 features = ["extras", "names"]
 ```
 
