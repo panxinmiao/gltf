@@ -134,6 +134,7 @@ impl Material {
         alpha_cutoff: None,
         alpha_mode: Checked::Valid(AlphaMode::Opaque),
         double_sided: false,
+        #[cfg(feature = "names")]
         name: None,
         pbr_metallic_roughness: PbrMetallicRoughness {
             base_color_factor: PbrBaseColorFactor([0.0, 0.0, 0.0, 0.0]),

@@ -171,6 +171,7 @@ impl Sampler {
     pub const DEFAULT_SAMPLER: Sampler = Sampler {
         mag_filter: None,
         min_filter: None,
+        #[cfg(feature = "names")]
         name: None,
         wrap_s: Checked::Valid(WrappingMode::Repeat),
         wrap_t: Checked::Valid(WrappingMode::Repeat),
